@@ -13,6 +13,20 @@ import AppFormInput from "~/components/Ui/AppFormInput";
 export default {
   name: "categoriesPage",
 
+  head() {
+    return {
+      title: "Categories",
+      meta: [
+        {
+          hid: "description",
+          name: "description",
+          content:
+            "Crie, edite e exclua categorias que serão utilizadas para organizar as suas finanças.",
+        },
+      ],
+    };
+  },
+
   components: {
     AppButton,
     AppFormInput,
