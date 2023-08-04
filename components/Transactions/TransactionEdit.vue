@@ -15,40 +15,36 @@
         <AppFormLabel>Descrição</AppFormLabel>
         <AppFormInput v-model="localTransaction.description" />
       </div>
-
-      <div>
-        <AppFormLabel>Categoria</AppFormLabel>
-        <AppFormSelect
-          v-model="localTransaction.categoryId"
-          :options="categories"
-        />
-      </div>
     </div>
 
     <div class="space-x-4 flex items-center justify-end">
-      <a
-        href=""
+      <button
         class="inline-flex text-gray-700 text-sm"
         @click.stop.prevent="onCancel()"
       >
         Cancelar
-      </a>
+      </button>
 
-      <AppButton @click="updateTransaction">
-        Editar
-      </AppButton>
+      <AppButton @click="updateTransaction"> Editar </AppButton>
+      <button
+        class="inline-flex items-center justify-center border focus:outline-none transition ease-in-out duration-150 text-white bg-red-600 hover:bg-red-800 border-red-600 hover:red-indigo-800 rounded text-sm px-4 py-2"
+        @click.stop.prevent="deleteTransaction"
+      >
+        Excluir
+      </button>
     </div>
   </div>
 </template>
 
 <script>
-import AppButton from '~/components/Ui/AppButton';
-import AppFormInput from '~/components/Ui/AppFormInput';
-import AppFormLabel from '~/components/Ui/AppFormLabel';
-import AppFormSelect from '~/components/Ui/AppFormSelect';
+import AppButton from "~/components/Ui/AppButton";
+import AppFormInput from "~/components/Ui/AppFormInput";
+import AppFormLabel from "~/components/Ui/AppFormLabel";
+import AppFormSelect from "~/components/Ui/AppFormSelect";
+import db from "~/static/db";
 
 export default {
-  name: 'TransactionEdit',
+  name: "TransactionEdit",
 
   components: {
     AppButton,
@@ -70,30 +66,37 @@ export default {
         date: this.transaction.date,
         description: this.transaction.description,
         amount: this.transaction.amount,
-        categoryId: this.transaction.category.id,
+        categoryId: this.transaction.categoryId,
+        categoryName: this.transaction.categoryName,
+        id: this.transaction.id,
       },
-      categories: [],
+      categories: db.categories,
     };
-  },
-
-  async fetch() {
-    this.categories = await this.$store.dispatch('categories/getCategories');
   },
 
   methods: {
     updateTransaction() {
-      this.$store.dispatch('transactions/updateTransaction', { id: this.transaction.id, data: this.localTransaction })
-        .then((response) => {
-          this.$emit('update', {
-            ...response,
-            category: this.categories.find(o => o.id == this.localTransaction.categoryId)
-          })
-          this.onCancel();
-        })
+      const data = this.localTransaction;
+
+      this.$emit("update", {
+        ...data,
+      });
+      this.onCancel();
     },
+
+    deleteTransaction() {
+      const id = this.transaction.id;
+
+      const transactionIndex = db.transactions.findIndex((t) => t.id === id);
+
+      if (transactionIndex !== -1) {
+        db.transactions.splice(transactionIndex, 1);
+      }
+    },
+
     onCancel() {
-      this.$emit('cancel');
-    }
+      this.$emit("cancel");
+    },
   },
 };
 </script>

@@ -7,22 +7,20 @@
 
     <div>
       <AppFormLabel>Categoria</AppFormLabel>
-      <AppFormSelect
-        v-model="form.categoryId"
-        :options="categories"
-      />
+      <AppFormSelect v-model="form.categoryId" :options="categories" />
     </div>
   </div>
 </template>
 
 <script>
-import { debounce } from 'lodash';
-import AppFormInput from '~/components/Ui/AppFormInput';
-import AppFormLabel from '~/components/Ui/AppFormLabel';
-import AppFormSelect from '~/components/Ui/AppFormSelect';
+import { debounce } from "lodash";
+import AppFormInput from "~/components/Ui/AppFormInput";
+import AppFormLabel from "~/components/Ui/AppFormLabel";
+import AppFormSelect from "~/components/Ui/AppFormSelect";
+import db from "~/static/db";
 
 export default {
-  name: 'TransactionFilter',
+  name: "TransactionFilter",
 
   components: {
     AppFormInput,
@@ -30,17 +28,13 @@ export default {
     AppFormSelect,
   },
 
-  async fetch() {
-    this.categories = await this.$store.dispatch('categories/getCategories');
-  },
-
   data() {
     return {
       form: {
-        description: '',
-        categoryId: '',
+        description: "",
+        categoryId: "",
       },
-      categories: [],
+      categories: db.categories,
     };
   },
 
@@ -48,21 +42,21 @@ export default {
     form: {
       deep: true,
       handler() {
-        this.onFilterDebounce()
-      }
-    }
+        this.onFilterDebounce();
+      },
+    },
   },
 
   methods: {
-    onFilterDebounce: debounce(function() {
-      this.onFilter()
+    onFilterDebounce: debounce(function () {
+      this.onFilter();
     }, 300),
 
     onFilter() {
-      this.$emit('filter', {
+      this.$emit("filter", {
         description: this.form.description || undefined,
         categoryId: this.form.categoryId || undefined,
-      })
+      });
     },
   },
 };

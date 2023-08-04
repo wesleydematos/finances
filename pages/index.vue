@@ -16,16 +16,15 @@
 
     <div class="mt-4">
       <div class="space-y-8">
-        <div v-for="(group, index) in transactionsGrouped" :key="index">
+        <div v-for="(transaction, index) in transactions" :key="index">
           <div class="mb-1">
             <div class="font-bold text-sm">
-              {{ formatDate(index) }}
+              {{ formatDate(transaction.date) }}
             </div>
           </div>
 
           <div class="space-y-3">
             <Transaction
-              v-for="transaction in group"
               :key="transaction.id"
               :transaction="transaction"
               @update="onUpdate"
@@ -38,7 +37,6 @@
 </template>
 
 <script>
-import { groupBy, orderBy } from "lodash";
 import TransactionAdd from "~/components/Transactions/TransactionAdd";
 import Transaction from "~/components/Transactions/Transaction";
 import AppButton from "~/components/Ui/AppButton";
@@ -55,29 +53,15 @@ export default {
     TransactionFilter,
   },
 
-  // async asyncData({ store }) {
-  //   return {
-  //     transactions: await store.dispatch("transactions/getTransactions"),
-  //   };
-  // },
-
   data() {
     return {
       isAdding: false,
+      transactions: db.transactions,
+      categories: db.categories,
     };
   },
 
-  // computed: {
-  //   transactionsGrouped() {
-  //     return groupBy(orderBy(this.transactions, "date", "desc"), "date");
-  //   },
-  // },
-
   methods: {
-    getInfo() {
-      console.log(db.transactions);
-    },
-
     formatDate(date) {
       return this.$dayjs(date).format("DD/MM/YYYY");
     },
@@ -87,21 +71,21 @@ export default {
     },
 
     onUpdate(transaction) {
-      const idx = this.transactions.findIndex((o) => o.id === transaction.id);
-      this.transactions.splice(idx, 1, transaction);
+      const index = this.transactions.findIndex((t) => t.id === transaction.id);
+      this.transactions.splice(index, 1, {
+        ...transaction,
+      });
     },
 
     onFilter(filter) {
-      this.$store
-        .dispatch("transactions/getTransactions", filter)
-        .then((response) => {
-          this.transactions = response;
-        });
+      console.log(filter);
+      //   this.$store
+      //     .dispatch("transactions/getTransactions", filter)
+      //     .then((response) => {
+      //       this.transactions = response;
+      //     });
+      // },
     },
-  },
-
-  mounted() {
-    this.getInfo();
   },
 };
 </script>

@@ -55,7 +55,6 @@
               class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-4"
             >
               <button
-                href="#"
                 class="text-indigo-600 hover:text-indigo-900"
                 @click.stop.prevent="updateCategory(category)"
               >
@@ -63,7 +62,6 @@
               </button>
 
               <button
-                href="#"
                 class="text-red-600 hover:text-red-900"
                 @click.stop.prevent="deleteCategory(category.id)"
               >

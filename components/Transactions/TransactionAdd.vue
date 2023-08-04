@@ -25,13 +25,12 @@
     </div>
 
     <div class="space-x-4 flex items-center justify-end">
-      <a
-        href=""
+      <button
         class="inline-flex text-gray-700 text-sm"
         @click.stop.prevent="onCancel()"
       >
         Cancelar
-      </a>
+      </button>
 
       <AppButton @click="addTransaction"> Adicionar </AppButton>
     </div>
@@ -43,6 +42,7 @@ import AppButton from "~/components/Ui/AppButton";
 import AppFormInput from "~/components/Ui/AppFormInput";
 import AppFormLabel from "~/components/Ui/AppFormLabel";
 import AppFormSelect from "~/components/Ui/AppFormSelect";
+import db from "~/static/db";
 
 export default {
   name: "TransactionAdd",
@@ -62,20 +62,29 @@ export default {
         description: "",
         categoryId: "",
       },
-      categories: [],
+      categories: db.categories,
     };
   },
 
   methods: {
     addTransaction() {
-      this.$store
-        .dispatch("transactions/addTransaction", this.form)
-        .then((response) => {
-          this.$emit("after-add", {
-            ...response,
-            category: this.categories.find((o) => o.id == this.form.categoryId),
-          });
-        });
+      const id = db.transactions.length + 1;
+      const foundCategory = this.categories.find(
+        (c) => c.id == this.form.categoryId
+      );
+
+      if (!foundCategory) {
+        this.$emit("cancel");
+      } else {
+        const newTransactions = {
+          id: id,
+          categoryName: foundCategory.name,
+          ...this.form,
+        };
+
+        this.$emit("after-add", { ...newTransactions });
+        this.$emit("cancel");
+      }
     },
 
     onCancel() {
