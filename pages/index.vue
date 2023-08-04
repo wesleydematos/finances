@@ -12,7 +12,7 @@
       @cancel="isAdding = false"
     />
 
-    <TransactionFilter @filter="onFilter" />
+    <div class="mt-5 border border-grey-600" />
 
     <div class="mt-4">
       <div class="space-y-8">
@@ -75,16 +75,6 @@ export default {
       this.transactions.splice(index, 1, {
         ...transaction,
       });
-    },
-
-    onFilter(filter) {
-      console.log(filter);
-      //   this.$store
-      //     .dispatch("transactions/getTransactions", filter)
-      //     .then((response) => {
-      //       this.transactions = response;
-      //     });
-      // },
     },
   },
 };
