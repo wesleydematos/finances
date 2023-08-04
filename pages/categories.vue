@@ -51,21 +51,24 @@
             </td>
 
             <td
+              v-if="category.id > 1"
               class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-4"
             >
-              <a
+              <button
                 href="#"
                 class="text-indigo-600 hover:text-indigo-900"
-                @click.stop.prevent="toUpdate(category)"
-                >Edit
-              </a>
+                @click.stop.prevent="updateCategory(category)"
+              >
+                Edit
+              </button>
 
-              <a
+              <button
                 href="#"
                 class="text-red-600 hover:text-red-900"
                 @click.stop.prevent="deleteCategory(category.id)"
-                >Excluir
-              </a>
+              >
+                Excluir
+              </button>
             </td>
           </tr>
         </tbody>
@@ -78,6 +81,7 @@
 import AppButton from "~/components/Ui/AppButton";
 import AppFormInput from "~/components/Ui/AppFormInput";
 import AppFormLabel from "~/components/Ui/AppFormLabel";
+import db from "~/static/db";
 
 export default {
   name: "categoriesPage",
@@ -88,19 +92,10 @@ export default {
     AppFormLabel,
   },
 
-  // async asyncData({ store }) {
-  //   return {
-  //     categories: await store
-  //       .dispatch("categories/getCategories")
-  //       .then((response) =>
-  //         response.map((o) => ({ ...o, is_updating: false }))
-  //       ),
-  //   };
-  // },
-
   data() {
     return {
       name: "",
+      categories: db.categories,
     };
   },
 
@@ -120,36 +115,38 @@ export default {
 
   methods: {
     deleteCategory(id) {
-      this.$store.dispatch("categories/deleteCategory", id).then(() => {
-        const idx = this.categories.findIndex((o) => o.id === id);
-        this.categories.splice(idx, 1);
-      });
+      const categoryIndex = this.categories.findIndex(
+        (category) => category.id === id
+      );
+
+      if (categoryIndex !== -1) {
+        this.categories.splice(categoryIndex, 1);
+      }
     },
-    toUpdate(category) {
-      category.is_updating = true;
-    },
+
     updateCategory(category) {
-      const data = {
-        name: category.name,
-      };
-      this.$store
-        .dispatch("categories/updateCategory", { id: category.id, data })
-        .then(() => {
-          category.is_updating = false;
-        });
+      if (category.is_updating) {
+        category.is_updating = false;
+      } else {
+        category.is_updating = true;
+      }
     },
+
     addCategory() {
       if (!this.name) {
         return;
       }
 
-      const data = {
+      const id = db.categories.length + 1;
+
+      const newCategory = {
+        id: id,
         name: this.name,
+        is_updating: false,
       };
-      this.$store.dispatch("categories/addCategory", data).then((response) => {
-        this.categories.push(response);
-        this.name = "";
-      });
+
+      db.categories.push(newCategory);
+      this.name = "";
     },
   },
 };

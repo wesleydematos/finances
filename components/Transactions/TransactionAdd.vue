@@ -66,10 +66,6 @@ export default {
     };
   },
 
-  async fetch() {
-    this.categories = await this.$store.dispatch("categories/getCategories");
-  },
-
   methods: {
     addTransaction() {
       this.$store

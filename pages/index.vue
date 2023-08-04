@@ -43,6 +43,7 @@ import TransactionAdd from "~/components/Transactions/TransactionAdd";
 import Transaction from "~/components/Transactions/Transaction";
 import AppButton from "~/components/Ui/AppButton";
 import TransactionFilter from "~/components/Transactions/TransactionFilter";
+import db from "~/static/db";
 
 export default {
   name: "IndexPage",
@@ -73,16 +74,23 @@ export default {
   // },
 
   methods: {
+    getInfo() {
+      console.log(db.transactions);
+    },
+
     formatDate(date) {
       return this.$dayjs(date).format("DD/MM/YYYY");
     },
+
     afterAdd(transaction) {
       this.transactions.push(transaction);
     },
+
     onUpdate(transaction) {
       const idx = this.transactions.findIndex((o) => o.id === transaction.id);
       this.transactions.splice(idx, 1, transaction);
     },
+
     onFilter(filter) {
       this.$store
         .dispatch("transactions/getTransactions", filter)
@@ -90,6 +98,10 @@ export default {
           this.transactions = response;
         });
     },
+  },
+
+  mounted() {
+    this.getInfo();
   },
 };
 </script>
